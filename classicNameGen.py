@@ -1,24 +1,25 @@
-#take two words, slam them together, create a new name for something that you'd prefer to keep context away from.
+
 # TODO:
-    # Make an alliteration mode
-    # Make a mode for specific combinations (verb-noun only, noun-adj only, etc)
-    # Make a mode for Syllables
+# Aliteration
+# More Granular Generation
+# Syllables
 
 
 from pathlib import Path
-# Add proper pathing functions in at some point. Hardcoding is bad and you should feel bad
+# Hardcoded paths are bad and you should feel bad
 
 import random
-seed = random.seed()
 cwdfiles = Path('./files/')
 
 # Deprecated abspaths:
-    # C:/Users/Patrick/Documents/VSCODE/personal-python/files/verbs.txt
-    # C:/Users/Patrick/Documents/VSCODE/personal-python/files/nouns.txt
-    # C:/Users/Patrick/Documents/VSCODE/personal-python/files/adjectives.txt
-    # C:/Users/Patrick/Documents/VSCODE/personal-python/files/wildcards.txt
+# C:/Users/Patrick/Documents/VSCODE/personal-python/files/verbs.txt
+# C:/Users/Patrick/Documents/VSCODE/personal-python/files/nouns.txt
+# C:/Users/Patrick/Documents/VSCODE/personal-python/files/adjectives.txt
+# C:/Users/Patrick/Documents/VSCODE/personal-python/files/wildcards.txt
+
+
 def grabVerb():
-    verbs_length = 30802
+    # verbs_length = 30802
     with open(f"{cwdfiles}/verbs.txt") as verbs:
         verbcontent = verbs.readlines()
         randint = random.randint(0, (len(verbcontent) - 1))
@@ -28,8 +29,9 @@ def grabVerb():
         outbound_verb = verbcontent[randint]
         return outbound_verb.strip("\n")
 
+
 def grabNoun():
-    nouns_length = 90963
+    # nouns_length = 90963
     with open(f"{cwdfiles}/nouns.txt") as nouns:
         noun_content = nouns.readlines()
         randint = random.randint(0, (len(noun_content) - 1))
@@ -39,8 +41,9 @@ def grabNoun():
         outbound_noun = noun_content[randint]
         return outbound_noun.strip("\n")
 
+
 def grabAdj():
-    adj_length = 28479
+    # adj_length = 28479
     with open(f"{cwdfiles}/adjectives.txt") as adjectives:
         adjectives_content = adjectives.readlines()
         randint = random.randint(0, (len(adjectives_content) - 1))
@@ -49,6 +52,7 @@ def grabAdj():
         # print(f"adjective = {adjectives.readline(100)}")
         outbound_adj = adjectives_content[randint]
         return outbound_adj.strip("\n")
+
 
 def grabWildcard():
     with open(f"{cwdfiles}/wildcards.txt") as wildcard:
@@ -60,11 +64,11 @@ def grabWildcard():
         outbound_wildcard = wildcard_content[randint]
         return outbound_wildcard.strip("\n")
 
+
 def nameGenerator():
     roller = random.randint(1, 9)
     roller2 = random.randint(1, 9)
-    wildcard = random.randint(1, 30)
-    # print(roller, roller2)
+    wildcard = random.randint(1, 45)
     if(roller >= 0 and roller < 3):
         firstWord = grabAdj()
         type1 = "adj"
@@ -76,7 +80,7 @@ def nameGenerator():
         type1 = "verb"
     else:
         print(f"something broke.... rand = {roller}")
-    
+
     if(roller2 >= 0 and roller2 < 3):
         secondWord = grabAdj()
         type2 = "adj"
@@ -88,10 +92,11 @@ def nameGenerator():
         type2 = "verb"
     else:
         print(f"something broke.... rand = {roller2}")
+
     if(wildcard >= 11 and wildcard <= 14):
         firstWord = grabWildcard()
         type1 = "wildcard"
-    elif(wildcard >= 21 and wildcard <= 24):
+    elif(wildcard >= 31 and wildcard <= 34):
         secondWord = grabWildcard()
         type2 = "wildcard"
     elif(wildcard == 1):
@@ -103,6 +108,7 @@ def nameGenerator():
     name = f"{firstWord.upper()}-{secondWord.upper()}"
     return name, types
 
+
 def save_result(name_list: list[str]):
     for names in name_list:
         while True:
@@ -110,7 +116,7 @@ def save_result(name_list: list[str]):
             y_n = input().upper()
             if y_n == 'Y':
                 names = f'{names}\n'
-                with open("C:/Users/Patrick/Documents/VSCODE/personal-python/files/genSaved.txt", mode='a') as save:
+                with open(f"{cwdfiles}/savedNames", mode='a') as save:
                     save.write(names)
                     save.close()
                     break
@@ -120,14 +126,14 @@ def save_result(name_list: list[str]):
             else:
                 print("Invalid Input")
 
+
 def menu():
-    # print("Enter number and enter to save to nameSaves.txt")
     quicksave = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
     while True:
         main_option = input("1. Generate\n2. Exit\nOption: ")
-        if main_option == '1':    
+        if main_option == '1':
             count = 0
-            tempStore = []                
+            tempStore = []
             while count < 10:
                 name, types = nameGenerator()
                 print(f"{count}. {name} {types}")
@@ -144,7 +150,7 @@ def menu():
                             save_option = int(save_option)
                             quick_save_name = f'{tempStore[save_option]}\n'
                             print(f"Quicksaving {tempStore[save_option]}")
-                            with open("C:/Users/Patrick/Documents/VSCODE/personal-python/files/genSaved.txt", mode='a') as save:
+                            with open(f"{cwdfiles}/savedNames.txt", mode='a') as save:
                                 save.write(quick_save_name)
                                 save.close()
                         else:
@@ -155,11 +161,9 @@ def menu():
             print("Invalid Input")
 
 
-
-def __main__():
+def main():
     menu()
 
 
-
-if __name__=='__main__':
-     __main__()
+if __name__ == '__main__':
+    main()
