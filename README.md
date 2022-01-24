@@ -1,18 +1,18 @@
 # atomic-pickaxe
 Randomly generate a word/term/label/name/whatever from 2 random english words, like Atomic Pickaxe!
 
-Default Functionalities as of 2022-01-24
-    classicNameGen.py will just bash 2 words together with wreckless abandon like such:
-      0. ARGUS-EYED-INCERTITUDE adj-noun
-      1. CAVALIERLY-PLATINUM adj-wildcard
-      2. DISASSOCIATING-MAINTAINERS verb-noun
-      3. UNLINKS-CAMASS verb-noun
-      4. ILL-CONCEIVED-CROTCHED adj-adj
-      5. TRIP-TOT verb-verb
-      6. BREECHLESS-BERGAMOTS adj-noun
-      7. UNSTRAPS-CRASH-DIVES verb-verb
-      8. HOKEY-WOUNDED adj-noun
-      9. SOLUBILIZES-CHOPPED verb-verb
+classicNameGen.py will just bash 2 words together with wreckless abandon like such (Default Functionalities as of 2022-01-24):
+
+0. ARGUS-EYED-INCERTITUDE adj-noun
+1. CAVALIERLY-PLATINUM adj-wildcard
+2. DISASSOCIATING-MAINTAINERS verb-noun
+3. UNLINKS-CAMASS verb-noun
+4. ILL-CONCEIVED-CROTCHED adj-adj
+5. TRIP-TOT verb-verb
+6. BREECHLESS-BERGAMOTS adj-noun
+7. UNSTRAPS-CRASH-DIVES verb-verb
+8. HOKEY-WOUNDED adj-noun
+9. SOLUBILIZES-CHOPPED verb-verb
 
 
 You have the option of saving via the listed index, or one-by-one if you choose to save without specification. It is not uncommon if on the default setting for you to have to run it a number times for it to produce something kind of cool or worth saving, sometimes you'll also find yourself saving 2-4 in the same batch, rng is rng is rng.
