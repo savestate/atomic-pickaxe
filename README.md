@@ -23,4 +23,4 @@ If you find the script is generating words and terms that are both terrifyingly 
 
 
 DISCLAIMER:
-I am most certainly not liable or responsible for any potentially insensitive or offensive terms that may be randomly generated. It happens, the word files are big, and if you find you don't want to risk being randomly thrown into a depression you can manually edit the noun/verb/adjective files and remove any potentional triggers. Changing the length of the files should not affect functionality.
+I am most certainly not liable or responsible for any potentially insensitive or offensive terms that may be randomly generated. It happens, the word files are big, and if you find you don't want to risk being randomly thrown into a depression you can manually edit the noun/verb/adjective files and remove any potential triggers. Changing the length of the files should not affect functionality.
