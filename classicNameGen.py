@@ -3,6 +3,9 @@
 # Aliteration
 # More Granular Generation
 # Syllables
+# Clean up files and dependencies
+# If wildcards does not exist, ask to create
+# get rid of camelcased functions and variables
 
 
 from pathlib import Path
@@ -16,6 +19,60 @@ cwdfiles = Path('./files/')
 # C:/Users/Patrick/Documents/VSCODE/personal-python/files/nouns.txt
 # C:/Users/Patrick/Documents/VSCODE/personal-python/files/adjectives.txt
 # C:/Users/Patrick/Documents/VSCODE/personal-python/files/wildcards.txt
+
+def last_three_lines(file: str):
+    # Display the last 3 lines of a given file at filepath
+    # For displaying the last 3 saved names or wildcard words
+    pass
+
+def manage_wildcards():
+    opt1 = input("Would you like to add to wildcards.txt? (Y/N) ").upper()
+    if opt1 == 'Y':
+        with open(f"{cwdfiles}/wildcards.txt", mode='a') as add_to_wild:
+            word_to_add = input("Enter a word to add to your wildcard list: ")
+            while True:
+                opt2 = input("Add Another? (Y/N) ").upper()
+                if opt2 == 'Y':
+                    word_to_add = f'{word_to_add}\n'
+                    # Enforce single word, no numbers (isidigit() == false)
+                    add_to_wild.write(word_to_add)
+                    print(f"Added {word_to_add}")
+                elif opt2 == 'N':
+                    break
+                else:
+                    print("Stop being dumb")
+                    break
+            add_to_wild.close()
+    elif opt1 == 'N':
+        print("Byeee")
+    else:
+        print("Invalid Input...")
+
+def init_wildcards():
+    while True:
+        wildcard_submenu_opt = input("You have not generated a wildcards.txt file yet, would you like to? (Y/N)").upper()
+        if wildcard_submenu_opt == 'Y':
+                Path(f"{cwdfiles}/wildcards.txt").touch()
+                print(f"{cwdfiles}/wildcards.txt created...")
+                with open(f"{cwdfiles}/wildcards.txt", mode='a') as add_to_wild:
+                    word_to_add = input("Enter a word to add to your wildcard list: ")
+                    word_to_add = f'{word_to_add}\n'
+                    # Enforce single word, no numbers (isidigit() == false)
+                    add_to_wild.write(word_to_add)
+                    print(f"Added {word_to_add}.\nYou can always add more from your file manager or the main menu.")
+                    add_to_wild.close()
+                
+        elif wildcard_submenu_opt == 'N':
+            print(f"Wildcards.txt not created, you can create one at any time.")
+            break
+        else:
+            print("Invalid Input... Please Enter Y or N")
+
+
+
+
+
+
 
 
 def grabVerb():
@@ -66,18 +123,21 @@ def grabWildcard():
 
 
 def nameGenerator():
-    roller = random.randint(1, 9)
-    roller2 = random.randint(1, 9)
-    wildcard = random.randint(1, 45)
+    roller = random.randint(1, 12)
+    roller2 = random.randint(1, 12)
+    # wildcard = random.randint(1, 45)
     if(roller >= 0 and roller < 3):
         firstWord = grabAdj()
         type1 = "adj"
     elif(roller >= 3 and roller < 6):
         firstWord = grabNoun()
         type1 = "noun"
-    elif(roller >= 6):
+    elif(roller >= 6 and roller < 9):
         firstWord = grabVerb()
         type1 = "verb"
+    elif(roller >= 9):
+        firstWord = grabWildcard()
+        type1 = "wildcard"
     else:
         print(f"something broke.... rand = {roller}")
 
@@ -87,23 +147,26 @@ def nameGenerator():
     elif(roller2 >= 3 and roller2 < 6):
         secondWord = grabNoun()
         type2 = "noun"
-    elif(roller2 >= 6):
+    elif(roller2 >= 6 and roller2 < 9):
         secondWord = grabVerb()
         type2 = "verb"
+    elif(roller2 >= 9):
+        secondWord = grabWildcard()
+        type2 = "wildcard"
     else:
         print(f"something broke.... rand = {roller2}")
-
-    if(wildcard >= 11 and wildcard <= 14):
-        firstWord = grabWildcard()
-        type1 = "wildcard"
-    elif(wildcard >= 31 and wildcard <= 34):
-        secondWord = grabWildcard()
-        type2 = "wildcard"
-    elif(wildcard == 1):
-        firstWord = grabWildcard()
-        secondWord = grabWildcard()
-        type1 = "wildcard"
-        type2 = "wildcard"
+        
+    # if(wildcard >= 11 and wildcard <= 14):
+    #     firstWord = grabWildcard()
+    #     type1 = "wildcard"
+    # elif(wildcard >= 31 and wildcard <= 34):
+    #     secondWord = grabWildcard()
+    #     type2 = "wildcard"
+    # elif(wildcard == 1):
+    #     firstWord = grabWildcard()
+    #     secondWord = grabWildcard()
+    #     type1 = "wildcard"
+    #     type2 = "wildcard"
     types = f"{type1}-{type2}"
     name = f"{firstWord.upper()}-{secondWord.upper()}"
     return name, types
@@ -130,7 +193,7 @@ def save_result(name_list: list[str]):
 def menu():
     quicksave = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
     while True:
-        main_option = input("1. Generate\n2. Exit\nOption: ")
+        main_option = input("1. Generate\n2. Edit wildcards.txt\n3. Exit\nOption: ")
         if main_option == '1':
             count = 0
             tempStore = []
@@ -150,19 +213,32 @@ def menu():
                             save_option = int(save_option)
                             quick_save_name = f'{tempStore[save_option]}\n'
                             print(f"Quicksaving {tempStore[save_option]}")
-                            with open(f"{cwdfiles}/savedNames.txt", mode='a') as save:
-                                save.write(quick_save_name)
-                                save.close()
+                            if Path(f"{cwdfiles}/savedNames.txt").exists():                                    
+                                with open(f"{cwdfiles}/savedNames.txt", mode='a') as save:
+                                    save.write(quick_save_name)
+                                    save.close()
+                            else:
+                                Path(f"{cwdfiles}/savedNames.txt").touch()
+                                with open(f"{cwdfiles}/savedNames.txt", mode='a') as save:
+                                    save.write(quick_save_name)
+                                    save.close()
                         else:
                             print("Invalid Input")
         elif main_option == '2':
+            manage_wildcards()
+        elif main_option == '3':
             exit()
         else:
             print("Invalid Input")
 
 
 def main():
-    menu()
+    if Path(f"{cwdfiles}/wildcards.txt").exists():
+        menu()
+    else:
+        init_wildcards()
+        menu()
+
 
 
 if __name__ == '__main__':
