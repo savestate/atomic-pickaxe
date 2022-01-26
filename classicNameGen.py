@@ -18,11 +18,6 @@ cwdfiles = f"{os.path.dirname(getsourcefile(lambda:0))}/files"
 # cwdfiles = f"{os.path.dirname(os.path.realpath(__file__))}/files"
 
 
-def last_three_lines(file: str):
-    # Display the last 3 lines of a given file at filepath
-    # For displaying the last 3 saved names or wildcard words
-    pass
-
 
 def logic_for_wc_mgmt(user_word_to_add: str):
     pass
