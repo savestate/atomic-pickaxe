@@ -3,14 +3,19 @@
 # Aliteration
 # More Granular Generation
 # Syllables
-# Clean up files and dependencies
-# If wildcards does not exist, ask to create
+# Add input validation to wildcards.txt (can be bypassed regardless in a file manager though... so maybe doesn't matter?)
+# Clean up files and dependencies (seems good enough 2022-01-25)
 # get rid of camelcased functions and variables
 
 import os
-from pathlib import Path
 import random
-cwdfiles = f"{os.path.dirname(os.path.realpath(__file__))}/files"
+from inspect import getsourcefile
+from pathlib import Path
+cwdfiles = f"{os.path.dirname(getsourcefile(lambda:0))}/files"
+
+
+# Not MacOS Safe
+# cwdfiles = f"{os.path.dirname(os.path.realpath(__file__))}/files"
 
 
 def last_three_lines(file: str):
@@ -24,31 +29,31 @@ def logic_for_wc_mgmt(user_word_to_add: str):
 
 
 def manage_wildcards():
-    opt1 = input("Would you like to add to wildcards.txt? (Y/N) ").upper()
-    if opt1 == 'Y':
-        with open(f"{cwdfiles}/wildcards.txt", mode='a') as add_to_wild:
-            word_to_add = input("Enter a word to add to your wildcard list: ")
-            word_to_add = f'{word_to_add}\n'
-            add_to_wild.write(word_to_add)
-            print(f"Added {word_to_add}")
-            while True:
-                opt2 = input("Add Another? (Y/N) ").upper()
-                if opt2 == 'Y':
-                    word_to_add = input("Word to add: ")
-                    word_to_add = f'{word_to_add}\n'
-                    # Enforce single word, no numbers (isidigit() == false)
-                    add_to_wild.write(word_to_add)
-                    print(f"Added {word_to_add}")
-                elif opt2 == 'N':
-                    break
-                else:
-                    print("Stop being dumb")
-                    break
-            add_to_wild.close()
-    elif opt1 == 'N':
-        print("Byeee")
-    else:
-        print("Invalid Input...")
+    while True:
+        opt1 = input("Would you like to add to wildcards.txt? (Y/N) ").upper()
+        if opt1 == 'Y':
+            with open(f"{cwdfiles}/wildcards.txt", mode='a') as add_to_wild:
+                word_to_add = input("Enter a word to add to your wildcard list: ")
+                word_to_add = f'{word_to_add}\n'
+                add_to_wild.write(word_to_add)
+                print(f"Added {word_to_add}", end='')
+                while True:
+                    opt2 = input("Add Another? (Y/N) ").upper()
+                    if opt2 == 'Y':
+                        word_to_add = input("Word to add: ")
+                        word_to_add = f'{word_to_add}\n'
+                        add_to_wild.write(word_to_add)
+                        print(f"Added {word_to_add}", end='')
+                    elif opt2 == 'N':
+                        break
+                    else:
+                        print("Stop being dumb")
+                        break
+                add_to_wild.close()
+        elif opt1 == 'N':
+            break
+        else:
+            print("Invalid Input...")
 
 
 def init_wildcards():
@@ -70,9 +75,6 @@ def grabVerb():
     with open(f"{cwdfiles}/verbs.txt") as verbs:
         verbcontent = verbs.readlines()
         randint = random.randint(0, (len(verbcontent) - 1))
-        # randint = random.randint(0, verbs_length)
-        # print(f"verbs RandInt = {randint}")
-        # print(f"verb = {verbs.readline(100)}")
         outbound_verb = verbcontent[randint]
         return outbound_verb.strip("\n")
 
@@ -82,9 +84,6 @@ def grabNoun():
     with open(f"{cwdfiles}/nouns.txt") as nouns:
         noun_content = nouns.readlines()
         randint = random.randint(0, (len(noun_content) - 1))
-        # randint = random.randint(0, nouns_length)
-        # print(f"nouns RandInt = {randint}")
-        # print(f"noun = {nouns.readline(100)}")
         outbound_noun = noun_content[randint]
         return outbound_noun.strip("\n")
 
@@ -94,9 +93,6 @@ def grabAdj():
     with open(f"{cwdfiles}/adjectives.txt") as adjectives:
         adjectives_content = adjectives.readlines()
         randint = random.randint(0, (len(adjectives_content) - 1))
-        # randint = random.randint(0, adj_length)
-        # print(f"adjectives RandInt = {randint}")
-        # print(f"adjective = {adjectives.readline(100)}")
         outbound_adj = adjectives_content[randint]
         return outbound_adj.strip("\n")
 
@@ -105,9 +101,6 @@ def grabWildcard():
     with open(f"{cwdfiles}/wildcards.txt") as wildcard:
         wildcard_content = wildcard.readlines()
         randint = random.randint(0, (len(wildcard_content) - 1))
-        # print(f"adjectives RandInt = {randint}")
-        # print(f"adjective = {adjectives.readline(100)}")
-        # print(f"DEBUG - WILDCARD {randint} {len(wildcard_content)} {wildcard_content[254]}")
         outbound_wildcard = wildcard_content[randint]
         return outbound_wildcard.strip("\n")
 
@@ -118,7 +111,6 @@ def nameGenerator():
         opt_wc_max = 12
     roller = random.randint(1, opt_wc_max)
     roller2 = random.randint(1, opt_wc_max)
-    # wildcard = random.randint(1, 45)
     if(roller >= 1 and roller <= 3):
         firstWord = grabAdj()
         type1 = "adj"
@@ -148,18 +140,7 @@ def nameGenerator():
         type2 = "wildcard"
     else:
         print(f"something broke.... rand = {roller2}")
-        
-    # if(wildcard >= 11 and wildcard <= 14):
-    #     firstWord = grabWildcard()
-    #     type1 = "wildcard"
-    # elif(wildcard >= 31 and wildcard <= 34):
-    #     secondWord = grabWildcard()
-    #     type2 = "wildcard"
-    # elif(wildcard == 1):
-    #     firstWord = grabWildcard()
-    #     secondWord = grabWildcard()
-    #     type1 = "wildcard"
-    #     type2 = "wildcard"
+
     types = f"{type1}-{type2}"
     name = f"{firstWord.upper()}-{secondWord.upper()}"
     return name, types
@@ -172,8 +153,9 @@ def save_result(name_list: list[str]):
             y_n = input().upper()
             if y_n == 'Y':
                 names = f'{names}\n'
-                with open(f"{cwdfiles}/savedNames", mode='a') as save:
+                with open(f"{cwdfiles}/savedNames.txt", mode='a') as save:
                     save.write(names)
+                    print(f"Saving: {names}", end='')
                     save.close()
                     break
             if y_n == 'N':
@@ -200,6 +182,7 @@ def menu():
                         save_option = input("Save Any of the Above? (Y/N): ").upper()
                         if save_option == 'Y':
                             save_result(tempStore)
+                            break
                         elif save_option == 'N' or save_option == '.':
                             break
                         elif save_option in quicksave:
