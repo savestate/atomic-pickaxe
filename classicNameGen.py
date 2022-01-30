@@ -347,7 +347,7 @@ def set_custom_settings() -> tuple():
             word1 = 'noun'
         elif opt == '4':
             print("Word 1 set to wildcard")
-            word1 == 'wild'
+            word1 = 'wild'
         elif opt == '5':
             print("Word 1 set to random")
             word1 = 'rand'
@@ -369,7 +369,7 @@ def set_custom_settings() -> tuple():
             word2 = 'noun'
         elif opt == '4':
             print("Word 2 set to wildcard")
-            word2 == 'wild'
+            word2 = 'wild'
         elif opt == '5':
             print("Word 2 set to random")
             word2 = 'rand'
