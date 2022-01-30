@@ -1,6 +1,6 @@
 
 # TODO:
-# Aliteration (sort of added 2022-01-28)
+# Alliteration (sort of added 2022-01-28)
 # More Granular Generation (custom generation added 2022-01-27)
 # Syllables
 # Add input validation to wildcards.txt (can be bypassed regardless in a file manager though... so maybe doesn't matter?)
@@ -318,6 +318,7 @@ def output_logic(default: bool):
             print(f"Run again with settings {settings}? (Y/N) ", end='')
             opt = input().upper()
             if opt == 'Y' or opt == '1':
+                temp_store_list = []
                 custom_repeater(settings, temp_store_list)
             elif opt == 'N' or opt == '2':
                 break
