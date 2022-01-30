@@ -1,28 +1,137 @@
 
 # TODO:
-# Aliteration
+# Aliteration (sort of added 2022-01-28)
 # More Granular Generation (custom generation added 2022-01-27)
 # Syllables
 # Add input validation to wildcards.txt (can be bypassed regardless in a file manager though... so maybe doesn't matter?)
 # Clean up files and dependencies (seems good enough 2022-01-25)
 # get rid of camelcased functions and variables
 
+import re
 import os
 import random
 from inspect import getsourcefile
 from pathlib import Path
 cwdfiles = f"{os.path.dirname(getsourcefile(lambda:0))}/files"
+set_alliteration = False
+output_count = 10
 
 
 # Not MacOS Safe
 # cwdfiles = f"{os.path.dirname(os.path.realpath(__file__))}/files"
 
+# Quite the mess of nested menues here ---- > fixed 2022-01-30
+def global_settings():
+    global set_alliteration
+    global output_count
+    while True:
+        print(f"""Global Settings
+        1. Toggle simple alliteration for all outputs? (Currently: {set_alliteration})
+        2. Change output count (Currently: {output_count})
+        3. Return """)
+        opt = input("Option: ")
+        if opt == '1':
+            if set_alliteration == False:
+                while True:
+                    subopt = input("Turn Alliteration On? (Y/ N) ").upper()
+                    if subopt == 'Y' or subopt == '1':
+                        set_alliteration = True
+                        print(f"Alliteration mode is now set to {set_alliteration}")
+                        break
+                    elif subopt == 'N' or subopt == '2':
+                        print(f"Alliteration mode will remain set to {set_alliteration}")
+                        break
+                    else:
+                        print(f"Invalid Input")
+                break
+            elif set_alliteration == True:
+                while True:
+                    subopt = input("Turn Alliteration Off? (Y/ N) ").upper()
+                    if subopt == 'Y' or subopt == '1':
+                        set_alliteration = False
+                        print(f"Alliteration mode is now set to {set_alliteration}")
+                        break
+                    elif subopt == 'N' or subopt == '2':
+                        print(f"Alliteration mode will remain set to {set_alliteration}")
+                        break
+                    else:
+                        print(f"Invalid Input")
+                break
+        elif opt == '2':
+            print(f"Edit output count? Currently set to {output_count}. ")
+            while True:
+                opt2 = input("Option (Y/N): ").upper()
+                if opt2 == 'Y' or opt2 == '1':
+                    print(f"Enter a number between 1 and 25 (note that larger numbers make for a noisy output) ")
+                    while True:
+                        subopt = input("Set output count: ")
+                        if subopt.isdigit():
+                            if int(subopt) <= 25 and int(subopt) > 0:
+                                output_count = int(subopt)
+                                print(f"Output Count set to {output_count}")
+                                break
+                            else:
+                                print(f"Invalid Input, enter an integer 25 or lower")
+                        else:
+                            print(f"Invalid Input, not a valid number.")
+                    break
+                elif opt2 == 'N' or opt2 == '2':
+                    print(f"Output count will remain set to: {output_count}")
+                    break
+                else:
+                    print("Invalid Input")
+        elif opt == '3' or opt == '.':
+            print("Returning to Menu")
+            break
+        else:
+            print("Invalid Input")
+            
+
+def display_help():
+    print(f"""How to use:
+    You can navigate this program with your keyboard or just your numpad.
+    Menu Controls:
+        Y / N is not case sensitive.
+        1 / 2 can substitute Y and N respectively.
+        All Exit Options can be accessed with '.'
+    
+    Notes on outputs:
+    Default configuration will display the type of each name generated following the name.
+    If Alliteration is set to ON, the number following the name is the attempts it took to find an alliterated match.""")
+
+# Still in testing --> Needs refinement but is functional
+# This function is for testing alliteration functionality, not to be used in main.
+# As of 2022-01-30 Needs to be actually implemented.
+def alliteration():
+    count = 0
+    vowels = ['a', 'e', 'i', 'o', 'u', 'y']
+    while True:
+        test1 = grabNoun()
+        test2 = grabNoun()
+        allit1 = [L for i, L in enumerate(test1) if i < 2]
+        allit2 = [L for i, L in enumerate(test2) if i < 2]
+        # if test1[0] == test2[0]:
+        #     print(test1, test2)
+        #     print(allit1, allit2)
+        #     print(F"This took {count} Tries")
+        #     break
+        if allit1 == allit2:
+            print(test1, test2)
+            print(allit1, allit2)
+            print(F"This took {count} Tries (if)")
+            break
+        elif (allit1[0] == allit2[0]) and ((allit1[1] and allit2[1]) in vowels):
+            print(test1, test2)
+            print(allit1, allit2)
+            print(F"This took {count} Tries (elif)")
+            break
+        count += 1
 
 
 def manage_wildcards():
     while True:
         opt1 = input("Would you like to add to wildcards.txt? (Y/N) ").upper()
-        if opt1 == 'Y':
+        if opt1 == 'Y' or opt1 == '1':
             with open(f"{cwdfiles}/wildcards.txt", mode='a') as add_to_wild:
                 word_to_add = input("Enter a word to add to your wildcard list: ")
                 word_to_add = f'{word_to_add}\n'
@@ -30,18 +139,18 @@ def manage_wildcards():
                 print(f"Added {word_to_add}", end='')
                 while True:
                     opt2 = input("Add Another? (Y/N) ").upper()
-                    if opt2 == 'Y':
+                    if opt2 == 'Y' or opt2 == '1':
                         word_to_add = input("Word to add: ")
                         word_to_add = f'{word_to_add}\n'
                         add_to_wild.write(word_to_add)
                         print(f"Added {word_to_add}", end='')
-                    elif opt2 == 'N':
+                    elif opt2 == 'N' or opt2 == '2':
                         break
                     else:
                         print("Stop being dumb")
                         break
                 add_to_wild.close()
-        elif opt1 == 'N':
+        elif opt1 == 'N' or opt1 == '2':
             break
         else:
             print("Invalid Input...")
@@ -50,11 +159,11 @@ def manage_wildcards():
 def init_wildcards():
     while True:
         wildcard_submenu_opt = input("You have not generated a wildcards.txt file yet, would you like to? (Y/N) ").upper()
-        if wildcard_submenu_opt == 'Y':
+        if wildcard_submenu_opt == 'Y' or wildcard_submenu_opt == '1':
                 Path(f"{cwdfiles}/wildcards.txt").touch()
                 print(f"{cwdfiles}/wildcards.txt created...")
                 break      
-        elif wildcard_submenu_opt == 'N':
+        elif wildcard_submenu_opt == 'N' or wildcard_submenu_opt == '2':
             print(f"Wildcards.txt not created, you can create one at any time.")
             break
         else:
@@ -96,7 +205,7 @@ def grabWildcard():
         return outbound_wildcard.strip("\n")
 
 
-def default_name_generation():
+def default_name_generation() -> (str):
     opt_wc_max = 9
     if Path(f"{cwdfiles}/wildcards.txt").exists():
         opt_wc_max = 12
@@ -153,14 +262,14 @@ def long_save_logic(name_list: list[str]):
         while True:
             print(f"SAVE (Y/N): {names} ---> ", end='')
             y_n = input().upper()
-            if y_n == 'Y':
+            if y_n == 'Y' or y_n == '1':
                 names = f'{names}\n'
                 with open(f"{cwdfiles}/savedNames.txt", mode='a') as save:
                     save.write(names)
                     print(f"Saving: {names}", end='')
                     save.close()
                     break
-            if y_n == 'N':
+            if y_n == 'N' or y_n == '2':
                 print(f"Discarding {names}")
                 break
             else:
@@ -168,7 +277,7 @@ def long_save_logic(name_list: list[str]):
 
 
 def save_logic(name_list: list[str]):
-    quicksave = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+    quicksave = [str(i) for i in range(0, output_count)]
     print(f"Type the index and hit enter to save, N or '.' to return: ", end='')
     
     while True:
@@ -196,7 +305,7 @@ def save_logic(name_list: list[str]):
 def output_logic(default: bool):
     temp_store_list = []
     if default == True:
-        for i in range(0, 10):
+        for i in range(0, output_count):
             name, types = default_name_generation()
             print(f"{i}. {name} {types}")
             temp_store_list.append(name)
@@ -210,7 +319,7 @@ def output_logic(default: bool):
             opt = input().upper()
             if opt == 'Y' or opt == '1':
                 custom_repeater(settings, temp_store_list)
-            elif opt == 'N' or opt == '.':
+            elif opt == 'N' or opt == '2':
                 break
             else:
                 print("Invalid Input")             
@@ -271,7 +380,7 @@ def set_custom_settings() -> tuple():
             return (word1, word2)
 
 
-def custom_name_generation(settings: tuple):
+def custom_name_generation(settings: tuple) -> str:
     for index, setting in enumerate(settings):
         if index == 0:
             if setting == 'verb':
@@ -315,7 +424,7 @@ def custom_name_generation(settings: tuple):
 
 
 def custom_repeater(settings: tuple, temp_store_list: list):
-    for i in range(0, 10):
+    for i in range(0, output_count):
         name = custom_name_generation(settings)
         print(f"{i}. {name}")
         temp_store_list.append(name)
@@ -324,8 +433,10 @@ def custom_repeater(settings: tuple, temp_store_list: list):
 
 def menu():
     while True:
-        main_option = input("1. Generate\n2. Edit wildcards.txt\n3. Exit\nOption: ")
+        main_option = input("MAIN MENU\n1. Generate\n2. Edit wildcards.txt\n3. Settings\n4. Exit\n5. Help\nOption: ")
         if main_option == '1':
+            if set_alliteration == True:
+                print(f"WARNING: Alliteration is ON! Program may take some time to run.")
             while True:
                 subopt1 = input("1. Default Generation\n2. Custom Generation\n3. Exit\nOption: ")
                 if subopt1 == '1':
@@ -346,12 +457,21 @@ def menu():
                     manage_wildcards()
 
         elif main_option == '3':
+            global_settings()
+
+        elif main_option == '4':
             exit()
+        elif main_option == '5':
+            display_help()
         else:
             print("Invalid Input")
 
 
 def main():
+    # # For testing only # #
+    # print(set_alliteration)
+    # alliteration()
+    # #
     if Path(f"{cwdfiles}/wildcards.txt").exists():
         menu()
     else:
