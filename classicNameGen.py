@@ -6,6 +6,7 @@
 # Add input validation to wildcards.txt (can be bypassed regardless in a file manager though... so maybe doesn't matter?)
 # Clean up files and dependencies (seems good enough 2022-01-25)
 # get rid of camelcased functions and variables & cleanup syntax
+# PROBABLY DEFINITELY WANT TO MOVE THESE FUNCTIONS INTO THEIR OWN LIBRARIES/MODULES/THINGIES
 
 import os
 import random
@@ -421,7 +422,7 @@ def output_logic(default: bool):
     if default == True:
         if set_alliteration == False:
             for i in range(0, output_count):
-                name, types = default_name_generation()
+                name, types, _ = default_name_generation()
                 print(f"{i}. {name:<35} {types:>18}")
                 temp_store_list.append(name)
             save_logic(temp_store_list)
