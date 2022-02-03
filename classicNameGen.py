@@ -1,13 +1,12 @@
 
 # TODO:
-# Alliteration (sort of added 2022-01-28)
+# Alliteration (sort of added 2022-01-28) (fully added 2022-02-02)
 # More Granular Generation (custom generation added 2022-01-27)
 # Syllables
 # Add input validation to wildcards.txt (can be bypassed regardless in a file manager though... so maybe doesn't matter?)
 # Clean up files and dependencies (seems good enough 2022-01-25)
-# get rid of camelcased functions and variables
+# get rid of camelcased functions and variables & cleanup syntax
 
-import re
 import os
 import random
 from inspect import getsourcefile
@@ -15,12 +14,12 @@ from pathlib import Path
 cwdfiles = f"{os.path.dirname(getsourcefile(lambda:0))}/files"
 set_alliteration = False
 output_count = 10
-
+output_settings = None
 
 # Not MacOS Safe
 # cwdfiles = f"{os.path.dirname(os.path.realpath(__file__))}/files"
 
-# Quite the mess of nested menues here ---- > fixed 2022-01-30
+# Quite the mess of nested menues here
 def global_settings():
     global set_alliteration
     global output_count
@@ -33,7 +32,7 @@ def global_settings():
         if opt == '1':
             if set_alliteration == False:
                 while True:
-                    subopt = input("Turn Alliteration On? (Y/ N) ").upper()
+                    subopt = input("Turn Alliteration On? (Y / N) ").upper()
                     if subopt == 'Y' or subopt == '1':
                         set_alliteration = True
                         print(f"Alliteration mode is now set to {set_alliteration}")
@@ -46,7 +45,7 @@ def global_settings():
                 break
             elif set_alliteration == True:
                 while True:
-                    subopt = input("Turn Alliteration Off? (Y/ N) ").upper()
+                    subopt = input("Turn Alliteration Off? (Y / N) ").upper()
                     if subopt == 'Y' or subopt == '1':
                         set_alliteration = False
                         print(f"Alliteration mode is now set to {set_alliteration}")
@@ -99,32 +98,145 @@ def display_help():
     Default configuration will display the type of each name generated following the name.
     If Alliteration is set to ON, the number following the name is the attempts it took to find an alliterated match.""")
 
-# Still in testing --> Needs refinement but is functional
+# # # # not working as intended # # # #
+# # # # Too liberal with what it returns
+# def in_word_allit(word1, word2) -> bool:
+#     alliterate_word1 = [L for i, L in enumerate(word1) if i < 2]
+#     alliterate_word2 = [L for i, L in enumerate(word2) if i < 2]
+#     for index, letter in enumerate(word2):
+#         if letter == alliterate_word1[0]:
+#             try:
+#                 if word2[index + 1] == alliterate_word1[1]:
+#                     return True
+#             except IndexError as error:
+                # maybe document errors moving forward but these are the only except blocks as of 22-02-02
+                # pass
+    # for index, letter in enumerate(word1):
+    #     if letter == alliterate_word2[0]:
+    #         try:
+    #             if word1[index + 1] == alliterate_word2[1]:
+    #                 return True
+    #         except IndexError as error:
+    #             pass
+
+        
+
 # This function is for testing alliteration functionality, not to be used in main.
-# As of 2022-01-30 Needs to be actually implemented.
-def alliteration():
+# feast your eyes upon the horror of a blinding mess. Insufferable code makes for pretty outputs I guess :)
+def test_alliteration():
+    count = 0
+    vowels = ['a', 'e', 'i', 'o', 'u', 'y']
+    reason = ''
+    while True:
+        while True:
+            _, _, word1 = default_name_generation()
+            word2 = word1[1].lower()
+            word1 = word1[0].lower()
+            if '-' in word1 or '-' in word2:
+                pass
+            else:
+                alliterate_word1 = [L for i, L in enumerate(word1) if i < 2]
+                alliterate_word2 = [L for i, L in enumerate(word2) if i < 2]
+                break
+        # if word1[0] == word2[0]:
+        #     print('')
+        #     reason = 'first letter'
+        if alliterate_word1 == alliterate_word2: # works as intended
+            reason = f"Twin Pair"
+            print(f"{word1:<25} {word2:<25} {count:^15} {alliterate_word1} {alliterate_word2} --> {reason}{f'':<30}", end='\n')
+        elif alliterate_word1[0] == alliterate_word2[0]: # works as intended
+            if (alliterate_word1[1] in vowels) and (alliterate_word2[1] in vowels):
+                reason = "First Letter + Vowel"
+                print(f"{word1:<25} {word2:<25} {count:^15} {alliterate_word1} {alliterate_word2} --> {reason}{f'':<30}", end='\n')
+        # special cases -- incomplete
+        elif (alliterate_word1[0] == 'c' and alliterate_word1[1] == 'y') and (alliterate_word2[0] == 's' and alliterate_word2[1] in vowels): # works as intended
+            reason = "cy and s<vowel>"
+            print(f"{word1:<25} {word2:<25} {count:^15} {alliterate_word1} {alliterate_word2} --> {reason}{f'':<30}", end='\n')
+        elif (alliterate_word1[0] == 's' and alliterate_word1[1] in vowels) and (alliterate_word2[0] == 'c' and alliterate_word2[1] == 'y'): # works as intended
+            reason = "s<vowel> and cy"
+            print(f"{word1:<25} {word2:<25} {count:^15} {alliterate_word1} {alliterate_word2} --> {reason}{f'':<30}", end='\n')
+        elif (alliterate_word1[0] == 't' and alliterate_word1[1] == 'r') and (alliterate_word2[0] == 'c' and alliterate_word2[1] == 'h'): # works as intended
+            reason = "tr and ch"
+            print(f"{word1:<25} {word2:<25} {count:^15} {alliterate_word1} {alliterate_word2} --> {reason}{f'':<30}", end='\n')
+        elif (alliterate_word1[0] == 'c' and alliterate_word1[1] == 'h') and (alliterate_word2[0] == 't' and alliterate_word2[1] == 'r'): # works as intended
+            reason = "ch and tr"
+            print(f"{word1:<25} {word2:<25} {count:^15} {alliterate_word1} {alliterate_word2} --> {reason}{f'':<30}", end='\n')
+        elif (alliterate_word1[0] == 'p' and alliterate_word1[1] == 'h'): # works as intended
+            if alliterate_word2[0] == 'f' and alliterate_word2[1] in vowels:
+                reason = "ph and f | <vowel>f"
+                print(f"{word1:<25} {word2:<25} {count:^15} {alliterate_word1} {alliterate_word2} --> {reason}{f'':<30}", end='\n')
+            elif alliterate_word2[0] in vowels and alliterate_word2[1] == 'f':
+                reason = "ph and f | <vowel>f"
+                print(f"{word1:<25} {word2:<25} {count:^15} {alliterate_word1} {alliterate_word2} --> {reason}{f'':<30}", end='\n')
+        elif (alliterate_word1[0] == 'f' and alliterate_word1[1] in vowels) or (alliterate_word1[0] in vowels and alliterate_word1[1] == 'f'): # works as intended
+            if alliterate_word2[0] == 'p' and alliterate_word2[1] == 'h':
+                reason = "f | <vowel>f and ph"
+                print(f"{word1:<25} {word2:<25} {count:^15} {alliterate_word1} {alliterate_word2} --> {reason}{f'':<30}", end='\n')
+        # elif in_word_allit(word1, word2): # not working as intended
+        #     reason = "In word"
+        #     print(f"{word1:<25} {word2:<25} {count:^15} {alliterate_word1} {alliterate_word2} --> {reason}", end='\n')
+
+        print(f"{word1:<25} {word2:<25} {count:^15} {alliterate_word1} {alliterate_word2} --> {reason}{f'':<30}", end='\r', flush=True)
+        count += 1
+        reason = ''
+
+
+def alliteration_logic(save_index) -> (bool, str):
     count = 0
     vowels = ['a', 'e', 'i', 'o', 'u', 'y']
     while True:
-        test1 = grabNoun()
-        test2 = grabNoun()
-        allit1 = [L for i, L in enumerate(test1) if i < 2]
-        allit2 = [L for i, L in enumerate(test2) if i < 2]
-        # if test1[0] == test2[0]:
-        #     print(test1, test2)
-        #     print(allit1, allit2)
-        #     print(F"This took {count} Tries")
-        #     break
-        if allit1 == allit2:
-            print(test1, test2)
-            print(allit1, allit2)
-            print(F"This took {count} Tries (if)")
-            break
-        elif (allit1[0] == allit2[0]) and ((allit1[1] and allit2[1]) in vowels):
-            print(test1, test2)
-            print(allit1, allit2)
-            print(F"This took {count} Tries (elif)")
-            break
+        while True:
+            if output_settings is not None:
+                fullname, word1, word2 = custom_name_generation()
+                word2 = word2.lower()
+                word1 = word1.lower()
+                fulltypes = f'{output_settings[0]}-{output_settings[1]}'
+                if '-' in word1 or '-' in word2:
+                    pass
+                else:
+                    alliterate_word1 = [L for i, L in enumerate(word1) if i < 2]
+                    alliterate_word2 = [L for i, L in enumerate(word2) if i < 2]
+                    break
+            else:
+                fullname, fulltypes, word1 = default_name_generation()
+                word2 = word1[1].lower()
+                word1 = word1[0].lower()
+                if '-' in word1 or '-' in word2:
+                    pass
+                else:
+                    alliterate_word1 = [L for i, L in enumerate(word1) if i < 2]
+                    alliterate_word2 = [L for i, L in enumerate(word2) if i < 2]
+                    break
+        if alliterate_word1 == alliterate_word2:
+            print(f"{save_index}. {fullname:<35} {fulltypes:>18} {f'-->'} {count}")
+            return True, fullname
+        elif alliterate_word1[0] == alliterate_word2[0]:
+            if (alliterate_word1[1] in vowels) and (alliterate_word2[1] in vowels):
+                print(f"{save_index}. {fullname:<35} {fulltypes:>18} {f'-->'} {count}")
+                return True, fullname
+        elif (alliterate_word1[0] == 'c' and alliterate_word1[1] == 'y') and (alliterate_word2[0] == 's' and alliterate_word2[1] in vowels):
+            print(f"{save_index}. {fullname:<35} {fulltypes:>18} {f'-->'} {count}")
+            return True, fullname
+        elif (alliterate_word1[0] == 's' and alliterate_word1[1] in vowels) and (alliterate_word2[0] == 'c' and alliterate_word2[1] == 'y'):
+            print(f"{save_index}. {fullname:<35} {fulltypes:>18} {f'-->'} {count}")
+            return True, fullname
+        elif (alliterate_word1[0] == 't' and alliterate_word1[1] == 'r') and (alliterate_word2[0] == 'c' and alliterate_word2[1] == 'h'):
+            print(f"{save_index}. {fullname:<35} {fulltypes:>18} {f'-->'} {count}")
+            return True, fullname
+        elif (alliterate_word1[0] == 'c' and alliterate_word1[1] == 'h') and (alliterate_word2[0] == 't' and alliterate_word2[1] == 'r'):
+            print(f"{save_index}. {fullname:<35} {fulltypes:>18} {f'-->'} {count}")
+            return True, fullname
+        elif (alliterate_word1[0] == 'p' and alliterate_word1[1] == 'h'):
+            if alliterate_word2[0] == 'f' and alliterate_word2[1] in vowels:
+                print(f"{save_index}. {fullname:<35} {fulltypes:>18} {f'-->'} {count}")
+                return True, fullname
+            elif alliterate_word2[0] in vowels and alliterate_word2[1] == 'f':
+                print(f"{save_index}. {fullname:<35} {fulltypes:>18} {f'-->'} {count}")
+                return True, fullname
+        elif (alliterate_word1[0] == 'f' and alliterate_word1[1] in vowels) or (alliterate_word1[0] in vowels and alliterate_word1[1] == 'f'):
+            if alliterate_word2[0] == 'p' and alliterate_word2[1] == 'h':
+                print(f"{save_index}. {fullname:<35} {fulltypes:>18} {f'-->'} {count}")
+                return True, fullname
         count += 1
 
 
@@ -205,7 +317,7 @@ def grabWildcard():
         return outbound_wildcard.strip("\n")
 
 
-def default_name_generation() -> (str):
+def default_name_generation() -> (str, str, tuple):
     opt_wc_max = 9
     if Path(f"{cwdfiles}/wildcards.txt").exists():
         opt_wc_max = 12
@@ -243,7 +355,8 @@ def default_name_generation() -> (str):
 
     types = f"{type1}-{type2}"
     name = f"{firstWord.upper()}-{secondWord.upper()}"
-    return name, types
+    name_tuple = (firstWord, secondWord)
+    return name, types, name_tuple
 
 # Deprecated
 def quicksave_logic(name_list: list[str]):
@@ -303,30 +416,44 @@ def save_logic(name_list: list[str]):
 
 
 def output_logic(default: bool):
+    global output_settings
     temp_store_list = []
     if default == True:
-        for i in range(0, output_count):
-            name, types = default_name_generation()
-            print(f"{i}. {name} {types}")
-            temp_store_list.append(name)
-        save_logic(temp_store_list)
+        if set_alliteration == False:
+            for i in range(0, output_count):
+                name, types = default_name_generation()
+                print(f"{i}. {name:<35} {types:>18}")
+                temp_store_list.append(name)
+            save_logic(temp_store_list)
+        elif set_alliteration == True:
+            count_alliteration = 0
+            while count_alliteration < output_count:
+                c_bool, name = alliteration_logic(count_alliteration)
+                if c_bool:
+                    count_alliteration += 1
+                    temp_store_list.append(name)
+            save_logic(temp_store_list)
+
     elif default == False:
-        settings = set_custom_settings()
-        print(f"Generating with custom setting: {settings}")
-        custom_repeater(settings, temp_store_list)
-        while True:
-            print(f"Run again with settings {settings}? (Y/N) ", end='')
-            opt = input().upper()
-            if opt == 'Y' or opt == '1':
-                temp_store_list = []
-                custom_repeater(settings, temp_store_list)
-            elif opt == 'N' or opt == '2':
-                break
-            else:
-                print("Invalid Input")             
+            global output_settings
+            set_custom_settings()
+            print(f"Generating with custom setting: {output_settings}")
+            custom_repeater(temp_store_list)
+            while True:
+                print(f"Run again with settings {output_settings}? (Y/N) ", end='')
+                opt = input().upper()
+                if opt == 'Y' or opt == '1':
+                    temp_store_list = []
+                    custom_repeater(temp_store_list)
+                elif opt == 'N' or opt == '2':
+                    output_settings = None
+                    break
+                else:
+                    print("Invalid Input")
 
 
-def set_custom_settings() -> tuple():
+def set_custom_settings():
+    global output_settings
     opts = ['1', '2', '3', '4', '5']
     print(f"""Set options for words 1 and 2
     1. Verb (random example verb: {grabVerb().upper()})
@@ -378,11 +505,12 @@ def set_custom_settings() -> tuple():
             print("Invalid Input")
 
         if opt in opts:
-            return (word1, word2)
+            output_settings = (word1, word2)
+            break
 
 
-def custom_name_generation(settings: tuple) -> str:
-    for index, setting in enumerate(settings):
+def custom_name_generation() -> (str, str, str):
+    for index, setting in enumerate(output_settings):
         if index == 0:
             if setting == 'verb':
                 word1 = grabVerb()
@@ -421,26 +549,37 @@ def custom_name_generation(settings: tuple) -> str:
                     word2 = grabVerb()
                 elif(roller >= 10):
                     word2 = grabWildcard()
-    return f'{word1.upper()}-{word2.upper()}'      
+    fullname = f'{word1.upper()}-{word2.upper()}' 
+    return fullname, word1, word2
 
 
-def custom_repeater(settings: tuple, temp_store_list: list):
-    for i in range(0, output_count):
-        name = custom_name_generation(settings)
-        print(f"{i}. {name}")
-        temp_store_list.append(name)
-    save_logic(temp_store_list)
+def custom_repeater(temp_store_list: list):
+    if set_alliteration == False:
+        for i in range(0, output_count):
+            name, _, _ = custom_name_generation()
+            fulltypes = f'{output_settings[0]}-{output_settings[1]}'
+            print(f"{i}. {name:<35} {fulltypes:>18}")
+            temp_store_list.append(name)
+        save_logic(temp_store_list)
+    elif set_alliteration == True:
+        count_alliteration = 0
+        while count_alliteration < output_count:
+            c_bool, name = alliteration_logic(count_alliteration)
+            if c_bool:
+                count_alliteration += 1
+                temp_store_list.append(name)
+        save_logic(temp_store_list)
 
 
 def menu():
     while True:
         main_option = input("MAIN MENU\n1. Generate\n2. Edit wildcards.txt\n3. Settings\n4. Exit\n5. Help\nOption: ")
         if main_option == '1':
-            if set_alliteration == True:
-                print(f"WARNING: Alliteration is ON! Program may take some time to run.")
             while True:
                 subopt1 = input("1. Default Generation\n2. Custom Generation\n3. Exit\nOption: ")
                 if subopt1 == '1':
+                    if set_alliteration == True:
+                        print(f"Generating with alliteration and default settings")
                     output_logic(True)
                 elif subopt1 == '2':
                     output_logic(False)
@@ -470,9 +609,14 @@ def menu():
 
 def main():
     # # For testing only # #
-    # print(set_alliteration)
-    # alliteration()
-    # #
+    # while True:
+    #     testin = input("1. to test alliteration")
+    #     if testin == '1':
+    #         print(set_alliteration)
+    #         test_alliteration()
+    #     elif testin == '2':
+    #         break
+    #
     if Path(f"{cwdfiles}/wildcards.txt").exists():
         menu()
     else:
