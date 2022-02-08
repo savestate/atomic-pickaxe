@@ -16,7 +16,8 @@ cwdfiles = f"{os.path.dirname(getsourcefile(lambda:0))}/files"
 set_alliteration = False
 output_count = 10
 output_settings = None
-
+stored_word1 = None
+stored_word2 = None
 # Not MacOS Safe
 # cwdfiles = f"{os.path.dirname(os.path.realpath(__file__))}/files"
 
@@ -455,13 +456,16 @@ def output_logic(default: bool):
 
 def set_custom_settings():
     global output_settings
-    opts = ['1', '2', '3', '4', '5']
+    global stored_word1
+    global stored_word2
+    opts = ['1', '2', '3', '4', '5', '6']
     print(f"""Set options for words 1 and 2
     1. Verb (random example verb: {grabVerb().upper()})
     2. Adjective (random example adjective: {grabAdj().upper()})
     3. Noun (random example noun: {grabNoun().upper()})
     4. Wildcard (random example wildcard: {grabWildcard().upper()})
     5. Random (default)
+    6. Specific Word
     """)
     while True:
         opt = input("Word 1 setting: ")
@@ -476,10 +480,19 @@ def set_custom_settings():
             word1 = 'noun'
         elif opt == '4':
             print("Word 1 set to wildcard")
-            word1 = 'wild'
+            word1 = 'wildcard'
         elif opt == '5':
             print("Word 1 set to random")
-            word1 = 'rand'
+            word1 = 'random'
+        elif opt == '6':
+            word1 = 'specific'
+            while True:
+                stored_word1 = input("Set specific word 1: ")
+                if len(stored_word1) < 25:
+                    print(f"Word 1 set to {stored_word1}")
+                    break
+                else:
+                    print("Try a shorter word...")
         else:
             print("Invalid Input")
         
@@ -498,10 +511,19 @@ def set_custom_settings():
             word2 = 'noun'
         elif opt == '4':
             print("Word 2 set to wildcard")
-            word2 = 'wild'
+            word2 = 'wildcard'
         elif opt == '5':
             print("Word 2 set to random")
-            word2 = 'rand'
+            word2 = 'random'
+        elif opt == '6':
+            word2 = 'specific'
+            while True:
+                stored_word2 = input("Set specific word 2: ")
+                if len(stored_word2) < 25:
+                    print(f"Word 2 set to {stored_word2}")
+                    break
+                else:
+                    print("Try a shorter word...")
         else:
             print("Invalid Input")
 
@@ -519,9 +541,9 @@ def custom_name_generation() -> (str, str, str):
                 word1 = grabAdj()
             elif setting == 'noun':
                 word1 = grabNoun()
-            elif setting == 'wild':
+            elif setting == 'wildcard':
                 word1 = grabWildcard()
-            elif setting == 'rand':
+            elif setting == 'random':
                 roller = random.randint(1, 12)
                 if(roller >= 1 and roller <= 3):
                     word1 = grabAdj()
@@ -531,6 +553,8 @@ def custom_name_generation() -> (str, str, str):
                     word1 = grabVerb()
                 elif(roller >= 10):
                     word1 = grabWildcard()
+            elif setting == 'specific':
+                word1 = stored_word1
         elif index == 1:
             if setting == 'verb':
                 word2 = grabVerb()
@@ -538,9 +562,9 @@ def custom_name_generation() -> (str, str, str):
                 word2 = grabAdj()
             elif setting == 'noun':
                 word2 = grabNoun()
-            elif setting == 'wild':
+            elif setting == 'wildcard':
                 word2 = grabWildcard()
-            elif setting == 'rand':
+            elif setting == 'random':
                 roller = random.randint(1, 12)
                 if(roller >= 1 and roller <= 3):
                     word2 = grabAdj()
@@ -550,6 +574,8 @@ def custom_name_generation() -> (str, str, str):
                     word2 = grabVerb()
                 elif(roller >= 10):
                     word2 = grabWildcard()
+            elif setting == 'specific':
+                word2 = stored_word2
     fullname = f'{word1.upper()}-{word2.upper()}' 
     return fullname, word1, word2
 
